@@ -1,7 +1,7 @@
 {
   "name": "حاسبة سعر الذهب",
-  "short_name": "GoldCalc",
-  "description": "حاسبة سعر الذهب البسيطة بالدينار الليبي.",
+  "short_name": "حاسبة الذهب",
+  "description": "تطبيق ويب لحساب سعر بيع الذهب بالدينار الليبي.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

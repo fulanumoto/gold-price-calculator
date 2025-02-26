@@ -1,18 +1,15 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>حاسبة سعر الذهب</title>
-  <!-- رابط إلى Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- رابط إلى ملف الـ Manifest -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#ffffff">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="حاسبة سعر الذهب">
+  <meta name="apple-mobile-web-app-title" content="حاسبة الذهب">
 </head>
 <body class="bg-gray-100 font-sans">
   <div class="min-h-screen flex items-center justify-center">
@@ -22,18 +19,29 @@
         <img src="logo.png" alt="Gold Price Calculator Logo" class="mx-auto w-50 h-50">
       </div>
       <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">حاسبة سعر الذهب</h2>
+      
+      <!-- زر التبديل -->
+      <div class="flex items-center justify-center mb-6">
+        <span class="text-gray-700 font-medium mr-2">أونصات</span>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" id="toggleSwitch" class="sr-only peer">
+          <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-5 peer-checked:bg-blue-500 after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:border after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+        </label>
+        <span class="text-gray-700 font-medium ml-2">صحراوي</span>
+      </div>
+
       <form id="goldForm">
         <div class="mb-4">
-          <label for="gramsOfGold" class="block text-gray-700 font-medium">وزن غرام الذهب</label>
-          <input type="number" id="gramsOfGold" class="mt-1 p-2 w-full border rounded-md" placeholder="أدخل وزن الذهب" required step="0.01">
+          <label for="gramsOfGold" class="block text-gray-700 font-medium">الوزن بالجرام</label>
+          <input type="number" id="gramsOfGold" class="mt-1 p-2 w-full border rounded-md" placeholder="أدخل وزن الذهب" step="any" required>
         </div>
         <div class="mb-4">
-          <label for="priceOfGold" class="block text-gray-700 font-medium">سعر غرام الذهب</label>
-          <input type="number" id="priceOfGold" class="mt-1 p-2 w-full border rounded-md" placeholder="أدخل سعر الذهب اليوم" required step="0.01">
+          <label for="priceOfGold" class="block text-gray-700 font-medium">سعر الذهب اليومي</label>
+          <input type="number" id="priceOfGold" class="mt-1 p-2 w-full border rounded-md" placeholder="أدخل سعر الذهب اليوم" step="any" required>
         </div>
         <div class="mb-4">
-          <label for="additionalPrice" class="block text-gray-700 font-medium">السعر المُضاف</label>
-          <input type="number" id="additionalPrice" class="mt-1 p-2 w-full border rounded-md" placeholder="أدخل السعر الإضافي" required step="0.01">
+          <label for="additionalPrice" class="block text-gray-700 font-medium">سعر إضافي</label>
+          <input type="number" id="additionalPrice" class="mt-1 p-2 w-full border rounded-md" placeholder="أدخل السعر الإضافي" step="any" required>
         </div>
         <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">احسب السعر</button>
       </form>
@@ -42,7 +50,34 @@
       </div>
     </div>
   </div>
+  
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('Service Worker مسجل', reg))
+        .catch(err => console.error('فشل تسجيل Service Worker', err));
+    }
+    
+    const form = document.getElementById('goldForm');
+    const toggleSwitch = document.getElementById('toggleSwitch');
 
-  <script src="script.js"></script>
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const gramsOfGold = parseFloat(document.getElementById('gramsOfGold').value.replace(',', '.'));
+      const priceOfGold = parseFloat(document.getElementById('priceOfGold').value.replace(',', '.'));
+      const additionalPrice = parseFloat(document.getElementById('additionalPrice').value.replace(',', '.'));
+      let price;
+      
+      if (!toggleSwitch.checked) {
+        price = (gramsOfGold * 999.9 / 750) * (priceOfGold + additionalPrice); // وضع الأونصات
+      } else {
+        price = (gramsOfGold * 749 / 750) * (priceOfGold + additionalPrice); // وضع الصحراوي
+      }
+      
+      document.getElementById('resultGoldAmount').textContent = gramsOfGold.toFixed(2);
+      document.getElementById('resultPrice').textContent = price.toFixed(2);
+      document.getElementById('result').classList.remove('hidden');
+    });
+  </script>
 </body>
 </html>
