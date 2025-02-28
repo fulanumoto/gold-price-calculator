@@ -14,10 +14,6 @@
 <body class="bg-gray-100 font-sans">
   <div class="min-h-screen flex items-center justify-center">
     <div class="bg-white p-8 rounded-lg shadow-lg w-96">
-      <!-- Logo -->
-      <div class="text-center mb-6">
-        <img src="logo.png" alt="Gold Price Calculator Logo" class="mx-auto w-50 h-50">
-      </div>
       <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">حاسبة سعر الذهب</h2>
       
       <!-- زر التبديل -->
@@ -32,21 +28,28 @@
 
       <form id="goldForm">
         <div class="mb-4">
-          <label for="gramsOfGold" class="block text-gray-700 font-medium">الوزن بالقرام</label>
+          <label for="gramsOfGold" class="block text-gray-700 font-medium">الوزن بالجرام</label>
           <input type="number" id="gramsOfGold" class="mt-1 p-2 w-full border rounded-md" placeholder="أدخل وزن الذهب" step="any" required>
         </div>
+        
+        <!-- درجة نقاء الذهب (تظهر فقط عند اختيار "صحراوي") -->
+        <div class="mb-4 hidden" id="purityField">
+          <label for="goldPurity" class="block text-gray-700 font-medium">درجة نقاء الذهب</label>
+          <input type="number" id="goldPurity" class="mt-1 p-2 w-full border rounded-md" placeholder="أدخل درجة نقاء الذهب" step="any">
+        </div>
+
         <div class="mb-4">
           <label for="priceOfGold" class="block text-gray-700 font-medium">سعر الذهب اليومي</label>
           <input type="number" id="priceOfGold" class="mt-1 p-2 w-full border rounded-md" placeholder="أدخل سعر الذهب اليوم" step="any" required>
         </div>
         <div class="mb-4">
-          <label for="additionalPrice" class="block text-gray-700 font-medium">السعر المُضاف</label>
+          <label for="additionalPrice" class="block text-gray-700 font-medium">سعر إضافي</label>
           <input type="number" id="additionalPrice" class="mt-1 p-2 w-full border rounded-md" placeholder="أدخل السعر الإضافي" step="any" required>
         </div>
         <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">احسب السعر</button>
       </form>
       <div id="result" class="mt-6 text-center text-xl text-gray-800 font-semibold hidden">
-        <p>سعر بيع <span id="resultGoldAmount"></span> قرام من الذهب هو: <span id="resultPrice"></span> دينار ليبي.</p>
+        <p>سعر بيع <span id="resultGoldAmount"></span> جرام من الذهب هو: <span id="resultPrice"></span> دينار ليبي.</p>
       </div>
     </div>
   </div>
@@ -60,6 +63,16 @@
     
     const form = document.getElementById('goldForm');
     const toggleSwitch = document.getElementById('toggleSwitch');
+    const purityField = document.getElementById('purityField');
+
+    // إظهار أو إخفاء حقل درجة النقاء عند التبديل
+    toggleSwitch.addEventListener('change', function() {
+      if (toggleSwitch.checked) {
+        purityField.classList.remove('hidden');
+      } else {
+        purityField.classList.add('hidden');
+      }
+    });
 
     form.addEventListener('submit', function(event) {
       event.preventDefault();
@@ -67,11 +80,14 @@
       const priceOfGold = parseFloat(document.getElementById('priceOfGold').value.replace(',', '.'));
       const additionalPrice = parseFloat(document.getElementById('additionalPrice').value.replace(',', '.'));
       let price;
-      
+
       if (!toggleSwitch.checked) {
-        price = (gramsOfGold * 999.9 / 750) * (priceOfGold + additionalPrice); // وضع الأونصات
+        // حساب الذهب بوضع "أونصات"
+        price = (gramsOfGold * 999.9 / 750) * (priceOfGold + additionalPrice);
       } else {
-        price = (gramsOfGold * 749 / 750) * (priceOfGold + additionalPrice); // وضع الصحراوي
+        // حساب الذهب بوضع "صحراوي"
+        const goldPurity = parseFloat(document.getElementById('goldPurity').value.replace(',', '.'));
+        price = (gramsOfGold * goldPurity / 750) * (priceOfGold + additionalPrice);
       }
       
       document.getElementById('resultGoldAmount').textContent = gramsOfGold.toFixed(2);
