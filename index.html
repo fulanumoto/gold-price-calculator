@@ -1,123 +1,118 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>حاسبة سعر الذهب</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#ffffff">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="حاسبة الذهب">
-  <!-- تحميل خط IBM Plex Sans Arabic -->
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
-
-  <script>
-    // ضبط Tailwind CSS لاستخدام الخط الجديد
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            arabic: ["IBM Plex Sans Arabic", "sans-serif"],
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة سعر الذهب</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@500;700&display=swap">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="حاسبة الذهب">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script>
+        function toggleActive(button) {
+            document.querySelectorAll(".toggle-button").forEach(btn => {
+                btn.classList.remove("bg-blue-500", "bg-green-500", "text-white");
+                btn.classList.add("bg-gray-200", "text-gray-800");
+            });
+            button.classList.remove("bg-gray-200", "text-gray-800");
+            button.classList.add(button.dataset.activeColor, "text-white");
         }
-      }
-    }
-  </script>
-
-  <style>
-    body {
-      font-family: 'IBM Plex Sans Arabic', sans-serif;
-    }
-  </style>
+        
+        function calculateSellingPrice() {
+            let dailyPrice = parseFloat(document.getElementById("dailyPrice").value) || 0;
+            let additional = parseFloat(document.getElementById("additional").value) || 0;
+            let selectedFormula = document.querySelector('input[name="formulaType"]:checked').value;
+            let result = 0;
+            
+            if (selectedFormula === "ounces") {
+                document.getElementById("ouncesFields").classList.remove("hidden");
+                document.getElementById("sahrawiFields").classList.add("hidden");
+                let weight = parseFloat(document.getElementById("goldWeight").value) || 0;
+                const goldPurity = 999.9;
+                const basePurity = 750;
+                result = weight * (goldPurity / basePurity) * (dailyPrice + additional);
+            } else {
+                document.getElementById("sahrawiFields").classList.remove("hidden");
+                document.getElementById("ouncesFields").classList.add("hidden");
+                let weight = parseFloat(document.getElementById("sahrawiWeight").value) || 0;
+                let goldPurity = parseFloat(document.getElementById("sahrawiPurity").value) || 0;
+                const basePurity = 750;
+                result = weight * (goldPurity / basePurity) * (dailyPrice + additional);
+            }
+            document.getElementById("result").innerText = "السعر: " + result.toFixed(2) + " دينار";
+        }
+        
+        function calculateBuyingPrice() {
+            let goldPriceUSD = parseFloat(document.getElementById("goldPriceUSD").value) || 0;
+            let bankDeduction = parseFloat(document.getElementById("bankDeduction").value) || 0;
+            let cashPrice = parseFloat(document.getElementById("cashPrice").value) || 0;
+            let shippingCost = parseFloat(document.getElementById("shippingCost").value) || 0;
+            
+            const conversionRate = 41.47;
+            let result = ((goldPriceUSD - bankDeduction) / conversionRate) * cashPrice - shippingCost;
+            
+            document.getElementById("buyingResult").innerText = "سعر الشراء: " + result.toFixed(2) + " دينار";
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 font-arabic">
-  <div class="min-h-screen flex items-center justify-center">
-    <div class="bg-white p-8 rounded-lg shadow-lg w-96">
-      <!-- Logo -->
-      <div class="text-center mb-6">
-        <img src="logo.png" alt="Gold Price Calculator Logo" class="mx-auto w-50 h-50">
-      </div>
-      <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">حاسبة سعر الذهب</h2>
-
-      <!-- أزرار اختيار بين "حساب سعر البيع" و "حساب سعر الشراء" -->
-      <div class="flex justify-center mb-6">
-        <button id="sellButton" class="px-6 py-2 mx-2 rounded-full text-gray-600 border transition-all duration-300 bg-white border-gray-300 hover:bg-gradient-to-r from-blue-400 to-blue-600 hover:text-white focus:bg-gradient-to-r focus:from-blue-400 focus:to-blue-600 focus:text-white">حساب سعر البيع</button>
-        <button id="buyButton" class="px-6 py-2 mx-2 rounded-full text-gray-600 border transition-all duration-300 bg-white border-gray-300 hover:bg-gradient-to-r from-green-400 to-green-600 hover:text-white focus:bg-gradient-to-r focus:from-green-400 focus:to-green-600 focus:text-white">حساب سعر الشراء</button>
-      </div>
-
-      <!-- حاسبة سعر البيع -->
-      <div id="sellCalculator">
-        <form id="goldForm">
-          <div class="mb-4">
-            <label for="gramsOfGold" class="block text-gray-700 font-medium">الوزن بالقرام</label>
-            <input type="number" id="gramsOfGold" class="mt-1 p-2 w-full border rounded-md" placeholder="أدخل وزن الذهب" step="any" required>
-          </div>
-          <div class="mb-4">
-            <label for="priceOfGold" class="block text-gray-700 font-medium">سعر الذهب اليوم</label>
-            <input type="number" id="priceOfGold" class="mt-1 p-2 w-full border rounded-md" placeholder="أدخل سعر الذهب اليوم" step="any" required>
-          </div>
-          <div class="mb-4">
-            <label for="additionalPrice" class="block text-gray-700 font-medium">سعر المُضاف</label>
-            <input type="number" id="additionalPrice" class="mt-1 p-2 w-full border rounded-md" placeholder="أدخل السعر الإضافي" step="any" required>
-          </div>
-
-          <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">احسب السعر</button>
-        </form>
-        <div id="result" class="mt-6 text-center text-xl text-gray-800 font-semibold hidden">
-          <p>سعر بيع <span id="resultGoldAmount"></span> قرام من الذهب هو: <span id="resultPrice"></span> دينار ليبي.</p>
+<body class="p-6 bg-gray-100 text-gray-900">
+    <div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
+        <img src="logo.png" alt="شعار" class="mx-auto mb-4 w-50 h-50">
+        <h2 class="text-xl font-bold mb-4 text-center">حاسبة سعر الذهب</h2>
+        
+        <div class="mb-4 flex justify-center space-x-4">
+            <button onclick="document.getElementById('sellingSection').classList.remove('hidden'); document.getElementById('buyingSection').classList.add('hidden'); toggleActive(this);" class="toggle-button px-4 py-2 bg-blue-500 text-white rounded-full" data-active-color="bg-blue-500">حساب سعر البيع</button>
+            <button onclick="document.getElementById('buyingSection').classList.remove('hidden'); document.getElementById('sellingSection').classList.add('hidden'); toggleActive(this);" class="toggle-button px-4 py-2 bg-gray-200 text-gray-800 rounded-full" data-active-color="bg-green-500">حساب سعر الشراء</button>
         </div>
-      </div>
-
-      <!-- حاسبة سعر الشراء (مخفية افتراضيًا) -->
-      <div id="buyCalculator" class="hidden">
-        <form id="buyForm">
-          <div class="mb-4">
-            <label for="goldPriceDollar" class="block text-gray-700 font-medium">سعر الشاشة</label>
-            <input type="number" id="goldPriceDollar" class="mt-1 p-2 w-full border rounded-md" placeholder="أدخل سعر الذهب بالدولار" step="any" required>
-          </div>
-          <div class="mb-4">
-            <label for="bankDeduction" class="block text-gray-700 font-medium">خصم المصرف</label>
-            <input type="number" id="bankDeduction" class="mt-1 p-2 w-full border rounded-md" placeholder="أدخل الخصم" step="any" required>
-          </div>
-          <div class="mb-4">
-            <label for="cashPrice" class="block text-gray-700 font-medium">السعر النقدي</label>
-            <input type="number" id="cashPrice" class="mt-1 p-2 w-full border rounded-md" placeholder="أدخل السعر النقدي" step="any" required>
-          </div>
-          <div class="mb-4">
-            <label for="shippingCost" class="block text-gray-700 font-medium">خصم الشحن</label>
-            <input type="number" id="shippingCost" class="mt-1 p-2 w-full border rounded-md" placeholder="أدخل خصم الشحن" step="any" required>
-          </div>
-
-          <button type="submit" class="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600">احسب سعر الشراء</button>
-        </form>
-        <div id="buyResult" class="mt-6 text-center text-xl text-gray-800 font-semibold hidden">
-          <p>سعر شراء الذهب هو: <span id="resultBuyPrice"></span> دينار ليبي.</p>
+        
+        <div id="sellingSection">
+            <div class="mb-4 flex justify-center space-x-4">
+                <label class="inline-flex items-center">
+                    <input type="radio" name="formulaType" value="ounces" checked class="form-radio text-blue-500" onclick="calculateSellingPrice()">
+                    <span class="ml-2">أونصات</span>
+                </label>
+                <label class="inline-flex items-center">
+                    <input type="radio" name="formulaType" value="sahrawi" class="form-radio text-blue-500" onclick="calculateSellingPrice()">
+                    <span class="ml-2">صحراوي</span>
+                </label>
+            </div>
+            <div id="ouncesFields">
+                <label class="block text-right">:وزن الذهب بالقرام</label>
+                <input type="number" id="goldWeight" value="50" step="0.01" class="w-full p-2 border rounded mb-2">
+            </div>
+            <div id="sahrawiFields" class="hidden">
+                <label class="block text-right">:وزن الذهب بالقرام</label>
+                <input type="number" id="sahrawiWeight" value="1238.67" step="0.01" class="w-full p-2 border rounded mb-2">
+                <label class="block text-right">:عيار السبيكة</label>
+                <input type="number" id="sahrawiPurity" value="856" step="0.01" class="w-full p-2 border rounded mb-2">
+            </div>
+            <label class="block text-right">:سعر الذهب اليوم</label>
+            <input type="number" id="dailyPrice" value="450" step="0.01" class="w-full p-2 border rounded mb-2">
+            <label class="block text-right">:السعر المُضاف</label>
+            <input type="number" id="additional" value="22" step="0.01" class="w-full p-2 border rounded mb-4">
+            <button onclick="calculateSellingPrice()" class="w-full bg-blue-500 text-white p-2 rounded">احسب السعر</button>
+            <h3 id="result" class="text-lg font-bold mt-4 text-center">السعر: 0.00 دينار</h3>
         </div>
-      </div>
+        
+        <div id="buyingSection" class="hidden">
+            <label class="block text-right">:سعر الشاشة</label>
+            <input type="number" id="goldPriceUSD" value="2848" step="0.01" class="w-full p-2 border rounded mb-2">
+            <label class="block text-right">:خصم المصرف</label>
+            <input type="number" id="bankDeduction" value="10" step="0.01" class="w-full p-2 border rounded mb-2">
+            <label class="block text-right">:السعر النقدي (الكاش)</label>
+            <input type="number" id="cashPrice" value="6.47" step="0.01" class="w-full p-2 border rounded mb-2">
+            <label class="block text-right">:خصم الشحن</label>
+            <input type="number" id="shippingCost" value="4.5" step="0.01" class="w-full p-2 border rounded mb-4">
+            <button onclick="calculateBuyingPrice()" class="w-full bg-green-500 text-white p-2 rounded">احسب السعر</button>
+            <h3 id="buyingResult" class="text-lg font-bold mt-4 text-center">سعر الشراء: 0.00 دينار</h3>
+        </div>
     </div>
-  </div>
-  
-  <script>
-    const sellButton = document.getElementById('sellButton');
-    const buyButton = document.getElementById('buyButton');
-    const sellCalculator = document.getElementById('sellCalculator');
-    const buyCalculator = document.getElementById('buyCalculator');
-
-    sellButton.addEventListener('click', function() {
-      sellCalculator.classList.remove('hidden');
-      buyCalculator.classList.add('hidden');
-      sellButton.classList.add('bg-gradient-to-r', 'from-blue-400', 'to-blue-600', 'text-white');
-      buyButton.classList.remove('bg-gradient-to-r', 'from-green-400', 'to-green-600', 'text-white');
-    });
-
-    buyButton.addEventListener('click', function() {
-      buyCalculator.classList.remove('hidden');
-      sellCalculator.classList.add('hidden');
-      buyButton.classList.add('bg-gradient-to-r', 'from-green-400', 'to-green-600', 'text-white');
-      sellButton.classList.remove('bg-gradient-to-r', 'from-blue-400', 'to-blue-600', 'text-white');
-    });
-  </script>
 </body>
 </html>
