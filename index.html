@@ -85,31 +85,31 @@
             </div>
             <div id="ouncesFields">
                 <label class="block text-right">:وزن الذهب بالقرام</label>
-                <input type="number" id="goldWeight" value="50" step="0.01" class="w-full p-2 border rounded mb-2">
+                <input type="number" id="goldWeight" placeholder="أدخل وزن الذهب" step="0.01" class="w-full p-2 border rounded mb-2">
             </div>
             <div id="sahrawiFields" class="hidden">
                 <label class="block text-right">:وزن الذهب بالقرام</label>
-                <input type="number" id="sahrawiWeight" value="1238.67" step="0.01" class="w-full p-2 border rounded mb-2">
+                <input type="number" id="sahrawiWeight" placeholder="أدخل وزن الذهب" step="0.01" class="w-full p-2 border rounded mb-2">
                 <label class="block text-right">:عيار السبيكة</label>
-                <input type="number" id="sahrawiPurity" value="856" step="0.01" class="w-full p-2 border rounded mb-2">
+                <input type="number" id="sahrawiPurity" placeholder="أدخل عيار سبيكة الذهب" step="0.01" class="w-full p-2 border rounded mb-2">
             </div>
             <label class="block text-right">:سعر الذهب اليوم</label>
-            <input type="number" id="dailyPrice" value="450" step="0.01" class="w-full p-2 border rounded mb-2">
+            <input type="number" id="dailyPrice" placeholder="أدخل القيمة بالدينار الليبي" step="0.01" class="w-full p-2 border rounded mb-2">
             <label class="block text-right">:السعر المُضاف</label>
-            <input type="number" id="additional" value="22" step="0.01" class="w-full p-2 border rounded mb-4">
+            <input type="number" id="additional" placeholder="أدخل القيمة الإضافية" step="0.01" class="w-full p-2 border rounded mb-4">
             <button onclick="calculateSellingPrice()" class="w-full bg-blue-500 text-white p-2 rounded">احسب السعر</button>
             <h3 id="result" class="text-lg font-bold mt-4 text-center">السعر: 0.00 دينار</h3>
         </div>
         
         <div id="buyingSection" class="hidden">
             <label class="block text-right">:سعر الشاشة</label>
-            <input type="number" id="goldPriceUSD" value="2848" step="0.01" class="w-full p-2 border rounded mb-2">
+            <input type="number" id="goldPriceUSD"placeholder="أدخل قيمة الذهب بالدولار الأمريكي" step="0.01" class="w-full p-2 border rounded mb-2">
             <label class="block text-right">:خصم المصرف</label>
-            <input type="number" id="bankDeduction" value="10" step="0.01" class="w-full p-2 border rounded mb-2">
+            <input type="number" id="bankDeduction" placeholder="أدخل قيمة الخصم من المصرف" step="0.01" class="w-full p-2 border rounded mb-2">
             <label class="block text-right">:السعر النقدي (الكاش)</label>
-            <input type="number" id="cashPrice" value="6.47" step="0.01" class="w-full p-2 border rounded mb-2">
+            <input type="number" id="cashPrice" placeholder="أدخل قيمة نقد دبي أو تركيا" step="0.01" class="w-full p-2 border rounded mb-2">
             <label class="block text-right">:خصم الشحن</label>
-            <input type="number" id="shippingCost" value="4.5" step="0.01" class="w-full p-2 border rounded mb-4">
+            <input type="number" id="shippingCost" placeholder="أدخل قيمة ضريبة الشحن" step="0.01" class="w-full p-2 border rounded mb-4">
             <button onclick="calculateBuyingPrice()" class="w-full bg-green-500 text-white p-2 rounded">احسب السعر</button>
             <h3 id="buyingResult" class="text-lg font-bold mt-4 text-center">سعر الشراء: 0.00 دينار</h3>
         </div>
