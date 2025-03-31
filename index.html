@@ -12,30 +12,40 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
         let deferredPrompt;
-        const installButton = document.createElement('button');
-        installButton.className = 'w-full bg-purple-500 text-white p-2 rounded mt-4 hidden';
-        installButton.id = 'installButton';
-        installButton.innerHTML = 'تثبّت التطبيق';
-        document.querySelector('.max-w-lg').appendChild(installButton);
+        let installButton;
+
+        window.addEventListener('load', () => {
+            installButton = document.createElement('button');
+            installButton.className = 'w-full bg-purple-500 text-white p-2 rounded mt-4 hidden';
+            installButton.id = 'installButton';
+            installButton.innerHTML = 'تثبّت التطبيق';
+            document.querySelector('.max-w-lg').appendChild(installButton);
+        });
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            installButton.classList.remove('hidden');
-        });
-
-        installButton.addEventListener('click', async () => {
-            if (!deferredPrompt) return;
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                installButton.classList.add('hidden');
+            if (installButton) {
+                installButton.classList.remove('hidden');
             }
         });
 
         window.addEventListener('appinstalled', () => {
-            installButton.classList.add('hidden');
+            if (installButton) {
+                installButton.classList.add('hidden');
+            }
         });
+
+        if (installButton) {
+            installButton.addEventListener('click', async () => {
+                if (!deferredPrompt) return;
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    installButton.classList.add('hidden');
+                }
+            });
+        }
 
         function toggleActive(button) {
             document.querySelectorAll(".toggle-button").forEach(btn => {
